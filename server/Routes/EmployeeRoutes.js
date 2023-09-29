@@ -3,7 +3,7 @@ const router = express.Router();
 const EmployeeModel = require("../model/EmployeeModel");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
-const jwt = require('jsonwebtoken')
+const jwt = require("jsonwebtoken");
 
 // Define the function to generate a random password
 function generateRandomPassword() {
@@ -29,7 +29,7 @@ const transporter = nodemailer.createTransport({
 // Route to add a new employee
 router.post("/add-employee", async (req, res) => {
   try {
-    const { Email } = req.body;
+    const { Email, Gender } = req.body;
 
     const existingUser = await EmployeeModel.find({ Email: Email }).select(
       "Email"
@@ -46,10 +46,13 @@ router.post("/add-employee", async (req, res) => {
     // Bcrypt hash of the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    const profile = Gender.toLowerCase() === "male" ? "male.png" : "female.png";
+
     // Create a new employee document using the EmployeeModel
     const newEmployee = new EmployeeModel({
       ...req.body,
       Password: hashedPassword, // Store the hashed password
+      Profile: profile,
     });
 
     // Save the new employee to the database

@@ -11,6 +11,7 @@ const AssignedTaskRoutes=require('./Routes/AssignedTaskRoutes')
 const AddProjectRoutes=require('./Routes/AddProjectRoutes')
 const AddTaskRoutes=require('./Routes/AddTaskRoutes')
 const SendReportRoutes=require('./Routes/SendReportRoute')
+const path=require('path')
 //Express obj
 
 const app=express()
@@ -33,6 +34,8 @@ app.use(express.json())
 // to parse the encoded data from url to make it available for the req.body
 app.use(express.urlencoded({ extended: true }));
 app.use(cors(corsOptions))
+
+app.use('/',express.static(path.join(__dirname,'/public'))) 
 
 app.use('/',SignInRoutes)
 app.use('/',EmployeeRoutes)
@@ -58,4 +61,6 @@ app.listen(port,()=>{
     console.log(`Server is runninng on the port ${port}`)
 })
 
+//to server images
 
+//`http://localhost:3001/images/{user.profile}`-male.png
