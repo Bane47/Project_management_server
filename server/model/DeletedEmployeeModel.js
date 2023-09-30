@@ -1,10 +1,7 @@
 const mongoose = require("mongoose");
 
-// Regular expression pattern for a valid email address
-const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-
-// Create a schema for the employee data
-const employeeSchema = new mongoose.Schema(
+// Create a schema for the deleted employee data
+const deletedEmployeeSchema = new mongoose.Schema(
   {
     EmployeeName: {
       type: String,
@@ -17,8 +14,6 @@ const employeeSchema = new mongoose.Schema(
     Email: {
       type: String,
       required: true,
-      unique: true,
-      match: emailRegex,
     },
     Designation: {
       type: String,
@@ -38,25 +33,12 @@ const employeeSchema = new mongoose.Schema(
     },
     SkypeId: {
       type: String,
-      unique: true,
-    },
-    Password: {
-      type: String,
-      required: true,
     },
     Role: {
       type: String,
-      default: "Employee",
-    },
-    lastLoginTime: {
-      type: Date,
-    },
-    isLoggedIn: {
-      type: Boolean,
-      default: false,
     },
     DesignationId: {
-      type: String, // Store DesignationId as a string
+      type: String,
     },
     Profile: {
       type: String,
@@ -64,14 +46,17 @@ const employeeSchema = new mongoose.Schema(
     Gender: {
       type: String,
       required: true,
-    }
+    },
+    deletedAt: {
+      type: Date,
+      default: Date.now, // Store the deletion timestamp
+    },
   },
   {
     timestamps: true,
   }
 );
 
-// Create a Mongoose model for the employee schema
-const EmployeeModel = mongoose.model("Employee", employeeSchema);
+const DeletedEmployeeModel = mongoose.model("DeletedEmployee", deletedEmployeeSchema);
 
-module.exports = EmployeeModel;
+module.exports = DeletedEmployeeModel;

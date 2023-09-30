@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const EmployeeModel = require("../model/EmployeeModel");
+const DeletedEmployeeModel = require('../model/DeletedEmployeeModel');
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
@@ -88,5 +89,60 @@ router.post("/add-employee", async (req, res) => {
     res.status(500).json({ error: `Internal server error ${error.message}` });
   }
 });
+
+
+
+//edit employee route
+
+router.put("/updateEmployee/:id", async (req, res) => {
+  const employeeId = parseInt(req.params.id);
+  const updatedEmployee = req.body;
+
+  try {
+    const updatedDoc = await EmployeeModel.findOneAndUpdate(
+      { EmployeeId: employeeId },
+      updatedEmployee,
+      { new: true }
+    );
+
+    if (!updatedDoc) {
+      return res.status(404).json({ error: "Employee not found" });
+    }
+
+    return res.json({ message: "Employee data updated successfully", employee: updatedDoc });
+  } catch (err) {
+    console.error("Error updating employee data:", err);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+
+// Controller to delete an employee
+router.post("/deleteEmployee", async (req, res) => {
+  try {
+    const { employee } = req.body;
+
+    // Generate a new unique _id for the DeletedEmployeeModel
+    const newDeletedEmployee = new DeletedEmployeeModel(employee);
+
+    // Remove the _id field from the employee data to let MongoDB generate a new unique _id
+    const { _id, ...employeeDataWithoutId } = employee;
+
+    // Create a new instance of DeletedEmployeeModel using the employee data without _id
+    const deletedEmployee = new DeletedEmployeeModel(employeeDataWithoutId);
+
+    // Save the deleted employee to the DeletedEmployeeModel
+    await deletedEmployee.save();
+
+    // Delete the employee from the Employees collection using the _id
+    await EmployeeModel.findByIdAndRemove(_id);
+
+    res.status(200).json({ message: "Employee deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting employee:", error);
+    res.status(500).json({ error: "Failed to delete employee" });
+  }
+});
+
 
 module.exports = router;
