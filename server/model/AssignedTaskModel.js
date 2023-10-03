@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const assignedTaskSchema = new mongoose.Schema({
-  projectTitle: { 
+  projectTitle: {
     type: String,
     required: true,
   },
@@ -13,17 +13,29 @@ const assignedTaskSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  managerEmail: { 
+  managerEmail: {
     type: String,
     required: true,
   },
   status: {
     type: String,
-    default: "null",
+    default: "Assigned",
   },
-  UnitHeadEmail:{
-    type:String
-  }
+  UnitHeadEmail: {
+    type: String,
+  },
+  clientName: {
+    type: String,
+    required: true,
+  },
+  clientEmail: {
+    type: String,
+    required: true,
+  },
+  clientSkypeId: {
+    type: String,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("AssignedTask", assignedTaskSchema);

@@ -32,21 +32,19 @@ const handleLogin = async (req, res) => {
     user.isLoggedIn = true;
     await user.save();
 
-    //sessionToken
+    // Generate an access token with a one-minute expiration time
+    const userToken = jwt.sign({ email }, process.env.JWT_SECRET);
 
-    const accessToken = jwt.sign({ email }, process.env.JWT_SECRET);
+    //accessToken
+
+    const accessToken=jwt.sign({email},process.env.JWT_SECRET,{expiresIn:"1d"});
+    const refreshToken=jwt.sign({email},process.env.JWT_REFRESH_SECRET,{expiresIn:"7d"});
+
+
 
     // Create a rememberme token as an object with email and password fields
     const remembermeToken = jwt.sign(
       { email, password },
-      process.env.JWT_SECRET
-    );
-
-    // const remembermeToken=generateAccessToken({email,password})
-
-    // Create an access token for the user's designation
-    const designationToken = jwt.sign(
-      { designation: user.Designation },
       process.env.JWT_SECRET
     );
 
@@ -57,20 +55,17 @@ const handleLogin = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    // console.log(roleIdToken);
-    // console.log(user.DesignationId);
-
     const userName = user.EmployeeName;
-
-    // const designationToken=generateAccessToken({ designation: user.Designation })
 
     res.status(200).json({
       message: "Login successful",
       userName,
-      designationToken,
       remembermeToken,
-      accessToken,
+      userToken,
       roleIdToken,
+
+      accessToken,
+      refreshToken,
     });
   } catch (error) {
     console.error("Error logging in:", error);
@@ -78,32 +73,30 @@ const handleLogin = async (req, res) => {
   }
 };
 
-
-
 //logout controller
 
-const handleLogout=async (req, res) => {
-    const { email } = req.body;
-  
-    try {
-      const user = await EmployeeModel.findOne({ Email: email });
-  
-      if (!user) {
-        return res.status(401).json({ message: "User not found" });
-      }
-  
-      // Update the isLoggedIn status to false
-      user.isLoggedIn = false;
-      await user.save();
-  
-      res.status(200).json({ message: "Logout successful" });
-    } catch (error) {
-      console.error("Error logging out:", error);
-      res.status(500).json({ message: "Internal server error" });
-    }
-  }
+const handleLogout = async (req, res) => {
+  const { email } = req.body;
 
-module.exports ={
-    handleLogin,
-    handleLogout
-}
+  try {
+    const user = await EmployeeModel.findOne({ Email: email });
+
+    if (!user) {
+      return res.status(401).json({ message: "User not found" });
+    }
+
+    // Update the isLoggedIn status to false
+    user.isLoggedIn = false;
+    await user.save();
+
+    res.status(200).json({ message: "Logout successful" });
+  } catch (error) {
+    console.error("Error logging out:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = {
+  handleLogin,
+  handleLogout,
+};
