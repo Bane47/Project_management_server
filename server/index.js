@@ -12,6 +12,7 @@ const AddProjectRoutes=require('./Routes/AddProjectRoutes')
 const AddTaskRoutes=require('./Routes/AddTaskRoutes')
 const SendReportRoutes=require('./Routes/SendReportRoute')
 const ProfileUpdateRoutes=require('./Routes/ProfileUpdateRoutes')
+const AnnouncementRoutes=require('./Routes/AnnouncementRoutes')
 const path=require('path')
 //Express obj
 
@@ -47,6 +48,7 @@ app.use("/",AddProjectRoutes)
 app.use("/",AddTaskRoutes)
 app.use("/",SendReportRoutes)
 app.use("/",ProfileUpdateRoutes)
+app.use("/",AnnouncementRoutes)
 
 //Routes
 
