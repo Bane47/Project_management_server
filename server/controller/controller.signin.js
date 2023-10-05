@@ -24,7 +24,7 @@ const handleLogin = async (req, res) => {
     if (!passwordMatch) {
       return res
         .status(401)
-        .json({ message: "Email or password doesn't match" });
+        .json({ message: "Email or password is Invalid" });
     }
 
     // Update the lastLoginTime for the user
@@ -34,6 +34,7 @@ const handleLogin = async (req, res) => {
 
     // Generate an access token with a one-minute expiration time
     const userToken = jwt.sign({ email }, process.env.JWT_SECRET);
+
 
     //accessToken
 
@@ -56,10 +57,13 @@ const handleLogin = async (req, res) => {
     );
 
     const userName = user.EmployeeName;
+  const Email=user.Email;
+   
 
     res.status(200).json({
       message: "Login successful",
       userName,
+      Email,
       remembermeToken,
       userToken,
       roleIdToken,

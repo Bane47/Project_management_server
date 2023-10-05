@@ -27,17 +27,26 @@ const transporter = nodemailer.createTransport({
 
 const handleAddEmployee = async (req, res) => {
   try {
-    const { Email, Gender } = req.body;
+    const { Email, Gender,EmployeeId } = req.body;
 
     const existingUser = await EmployeeModel.find({ Email: Email }).select(
       "Email"
     );
-    console.log("email", Email);
-    console.log("existingUser", existingUser.length);
 
     if (existingUser.length) {
       return res.status(500).json({ message: "Email Already Registered" });
     }
+
+     // Check if the employee with the given employee ID already exists
+     const existingEmployeeIdUser = await EmployeeModel.find({
+      EmployeeId: EmployeeId,
+    }).select("EmployeeId");
+
+    if (existingEmployeeIdUser.length) {
+      return res.status(500).json({ message: "Try Another Employee Pin" });
+    }
+
+
     // Generate a random password for the new employee
     const password = generateRandomPassword();
 
