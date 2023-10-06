@@ -2,15 +2,13 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const EmployeeModel = require("../model/EmployeeModel");
 
-//Login Controller
-
+// Login Controller
 const handleLogin = async (req, res) => {
   const { email, password } = req.body;
-  // console.log(email, password);
 
   try {
-    if ((!email, !password)) {
-      return res.status(401).json({ message: "Fields Cannot be empty" });
+    if (!email || !password) {
+      return res.status(401).json({ message: "Fields cannot be empty" });
     }
 
     const user = await EmployeeModel.findOne({ Email: email });
@@ -22,9 +20,7 @@ const handleLogin = async (req, res) => {
     const passwordMatch = await bcrypt.compare(password, user.Password);
 
     if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ message: "Email or password is Invalid" });
+      return res.status(401).json({ message: "Email or password is invalid" });
     }
 
     // Update the lastLoginTime for the user
@@ -35,13 +31,13 @@ const handleLogin = async (req, res) => {
     // Generate an access token with a one-minute expiration time
     const userToken = jwt.sign({ email }, process.env.JWT_SECRET);
 
-
-    //accessToken
-
-    const accessToken=jwt.sign({email},process.env.JWT_SECRET,{expiresIn:"1d"});
-    const refreshToken=jwt.sign({email},process.env.JWT_REFRESH_SECRET,{expiresIn:"7d"});
-
-
+    // accessToken
+    const accessToken = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: "1d",
+    });
+    const refreshToken = jwt.sign({ email }, process.env.JWT_REFRESH_SECRET, {
+      expiresIn: "7d",
+    });
 
     // Create a rememberme token as an object with email and password fields
     const remembermeToken = jwt.sign(
@@ -49,16 +45,14 @@ const handleLogin = async (req, res) => {
       process.env.JWT_SECRET
     );
 
-    //roleid token
-
+    // roleid token
     const roleIdToken = jwt.sign(
       { roleId: user.DesignationId },
       process.env.JWT_SECRET
     );
 
     const userName = user.EmployeeName;
-  const Email=user.Email;
-   
+    const Email = user.Email;
 
     res.status(200).json({
       message: "Login successful",
@@ -67,18 +61,16 @@ const handleLogin = async (req, res) => {
       remembermeToken,
       userToken,
       roleIdToken,
-
       accessToken,
       refreshToken,
     });
   } catch (error) {
     console.error("Error logging in:", error);
-    res.status(500).json({ message: "Internal server error" + error.message });
+    res.status(500).json({ message: "Internal server error" });
   }
 };
 
-//logout controller
-
+// Logout Controller
 const handleLogout = async (req, res) => {
   const { email } = req.body;
 
@@ -89,7 +81,7 @@ const handleLogout = async (req, res) => {
       return res.status(401).json({ message: "User not found" });
     }
 
-    // Update the isLoggedIn status to false
+    // Updating the isLoggedIn status to false
     user.isLoggedIn = false;
     await user.save();
 

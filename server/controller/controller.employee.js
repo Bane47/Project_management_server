@@ -4,9 +4,9 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-// Define the function to generate a random password
+// to generate a random password
 function generateRandomPassword() {
-  const length = 8; // You can adjust the length of the password
+  const length = 8; 
   const charset = "abcdeABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
   let password = "";
   for (let i = 0; i < length; i++) {
@@ -14,20 +14,20 @@ function generateRandomPassword() {
     password += charset.charAt(randomIndex);
   }
   return password;
-}
+}  //this will return an random 8 digit function
 
-// Create a Nodemailer transporter with your Gmail account
+//  Nodemailer transporter 
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "karthiynot2108@gmail.com", // Your Gmail address
-    pass: "ihnsbfwigpcqfcrv", // Your Gmail password
+    user: "karthiynot2108@gmail.com",
+    pass: "ihnsbfwigpcqfcrv",
   },
 });
 
 const handleAddEmployee = async (req, res) => {
   try {
-    const { Email, Gender,EmployeeId } = req.body;
+    const { Email, Gender, EmployeeId } = req.body;
 
     const existingUser = await EmployeeModel.find({ Email: Email }).select(
       "Email"
@@ -37,8 +37,8 @@ const handleAddEmployee = async (req, res) => {
       return res.status(500).json({ message: "Email Already Registered" });
     }
 
-     // Check if the employee with the given employee ID already exists
-     const existingEmployeeIdUser = await EmployeeModel.find({
+    // Checkecking employee ID already exists
+    const existingEmployeeIdUser = await EmployeeModel.find({
       EmployeeId: EmployeeId,
     }).select("EmployeeId");
 
@@ -46,11 +46,10 @@ const handleAddEmployee = async (req, res) => {
       return res.status(500).json({ message: "Try Another Employee Pin" });
     }
 
-
-    // Generate a random password for the new employee
+    // random password for nem employee
     const password = generateRandomPassword();
 
-    // Bcrypt hash of the password
+    // hash of the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const profile = Gender.toLowerCase() === "male" ? "male.png" : "female.png";

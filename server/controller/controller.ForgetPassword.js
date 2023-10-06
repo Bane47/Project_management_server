@@ -3,7 +3,6 @@ const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const EmployeeModel = require("../model/EmployeeModel");
 
-
 const handleForgetPassword = (req, res) => {
   console.log("I came inside raa");
   const { email } = req.body;
@@ -42,25 +41,24 @@ const handleForgetPassword = (req, res) => {
   });
 };
 
+const handleResetPassword = (req, res) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
 
-const handleResetPassword=(req, res) => {
-    const { id, token } = req.params;
-    const { password } = req.body;
-  
-    jwt.verify(token, "jwt_secret_key", (err, decoded) => {
-      if (err) {
-        return res.json({ Status: "Error with token" });
-      } else {
-        bcrypt
-          .hash(password, 10)
-          .then((hash) => {
-            EmployeeModel.findByIdAndUpdate({ _id: id }, { Password: hash })
-              .then((u) => res.send({ Status: "Success" }))
-              .catch((err) => res.send({ Status: err }));
-          })
-          .catch((err) => res.send({ Status: err }));
-      }
-    });
-  }
+  jwt.verify(token, "jwt_secret_key", (err, decoded) => {
+    if (err) {
+      return res.json({ Status: "Error with token" });
+    } else {
+      bcrypt
+        .hash(password, 10)
+        .then((hash) => {
+          EmployeeModel.findByIdAndUpdate({ _id: id }, { Password: hash })
+            .then((u) => res.send({ Status: "Success" }))
+            .catch((err) => res.send({ Status: err }));
+        })
+        .catch((err) => res.send({ Status: err }));
+    }
+  });
+};
 
-module.exports = { handleForgetPassword,handleResetPassword };
+module.exports = { handleForgetPassword, handleResetPassword };
